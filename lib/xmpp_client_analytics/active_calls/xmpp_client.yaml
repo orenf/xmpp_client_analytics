@@ -1,0 +1,12 @@
+--- 
+1: 
+  :aors: 
+  - :aor: ""
+    :password: ""
+  :adapters: 
+  - :mysql: 
+      :host: "localhost"
+      :db_user: "analytics"
+      :db_password: "123"
+      :db: "analytics"
+
