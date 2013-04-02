@@ -1,7 +1,4 @@
-#!/usr/bin/ruby -rubygems
-
-require "xmpp_client_analytics/version"
-require "xmpp_client_analytics/active_calls/active_calls"
+require "#{File.dirname(__FILE__)}/xmpp_client_analytics/active_calls/active_calls"
 
 require 'xmpp4r/iq'
 require 'xmpp4r/command/iq/command'

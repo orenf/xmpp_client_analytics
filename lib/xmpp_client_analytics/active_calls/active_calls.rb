@@ -157,7 +157,10 @@ module Jnctn
       attr_accessor :publish_time, :call_id, :from_uri, :to_uri,
         :to_aor, :call_setup_id, :from_display, :to_display, :length,
         :time_from_ringer, :time_from_answered, :time_hung_up,
-        :dialog_state, :item_id, :flag_call_setup, :item_ended
+        :dialog_state, :item_id, :flag_call_setup, :item_ended,
+        :ringer_hour, :ringer_day, :ringer_month, :ringer_year,
+        :answered_hour, :answered_day, :answered_month, :answered_year
+        :hung_up_hour, :hung_up_day, :hung_up_month, :hung_up_year
 
       def initialize
         @time_from_answered = ""
@@ -165,6 +168,8 @@ module Jnctn
         @time_hung_up = ""
         @call_id = ""
         @from_uri = ""
+        @ringer_hour = 0
+        @ringer_day = 0
       end
 
     end #ActiveCallItem
