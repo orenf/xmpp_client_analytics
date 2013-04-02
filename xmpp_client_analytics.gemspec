@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'xmpp_client_analytics/version'
+# require 'xmpp_client_analytics/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "xmpp_client_analytics"
-  spec.version       = VERSION
+  spec.version       = "0.0.1"
   spec.authors       = ["Oren Forer"]
   spec.email         = ["oren@junctionnetworks.com"]
   spec.description   = "this a description"
