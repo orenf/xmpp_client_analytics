@@ -155,21 +155,31 @@ module Jnctn
     class ActiveCallItem
 
       attr_accessor :publish_time, :call_id, :from_uri, :to_uri,
-        :to_aor, :call_setup_id, :from_display, :to_display, :length,
         :time_from_ringer, :time_from_answered, :time_hung_up,
         :dialog_state, :item_id, :flag_call_setup, :item_ended,
         :ringer_hour, :ringer_day, :ringer_month, :ringer_year,
+        :hung_up_hour, :hung_up_day, :hung_up_month, :hung_up_year,
+        :to_aor, :call_setup_id, :from_display, :to_display, :length,
         :answered_hour, :answered_day, :answered_month, :answered_year
-        :hung_up_hour, :hung_up_day, :hung_up_month, :hung_up_year
 
       def initialize
-        @time_from_answered = ""
-        @time_from_ringer = ""
-        @time_hung_up = ""
         @call_id = ""
         @from_uri = ""
-        @ringer_hour = 0
-        @ringer_day = 0
+        @ringer_day = -1
+        @ringer_hour = -1
+        @ringer_year = -1
+        @ringer_month = -1
+        @hung_up_day = -1
+        @hung_up_hour = -1
+        @hung_up_year = -1
+        @hung_up_month = -1
+        @answered_day = -1
+        @answered_hour = -1
+        @answered_year = -1
+        @answered_month = -1
+        @time_hung_up = ""
+        @time_from_ringer = ""
+        @time_from_answered = ""
       end
 
     end #ActiveCallItem
@@ -198,6 +208,10 @@ module Jnctn
               item.dialog_state == 'requested')
 
             item.time_from_ringer = Time.now.utc
+            item.ringer_day = item.time_from_ringer.day
+            item.ringer_hour = item.time_from_ringer.hour
+            item.ringer_year = item.time_from_ringer.year
+            item.ringer_month = item.time_from_ringer.month
 
             # incoming call is setup
             item.flag_call_setup = true if call_setup?(item)
@@ -217,6 +231,10 @@ module Jnctn
                 if ci.item_id == item.item_id
                   ci.to_aor = item.to_aor
                   ci.time_from_answered = Time.now.utc
+                  ci.answered_hour = ci.time_from_answered.hour
+                  ci.answered_day = ci.time_from_answered.day
+                  ci.answered_month = ci.time_from_answered.month
+                  ci.answered_year = ci.time_from_answered.year
                   ci.dialog_state = 'confirmed'
                 end
               }
@@ -237,8 +255,13 @@ module Jnctn
 
             if call.is_a?(Array) && call.length == 1
               c = call[0].clone
-              c.time_hung_up = Time.now.utc
               c.length = 0
+              c.time_hung_up = Time.now.utc
+              c.hung_up_hour = c.time_hung_up.hour
+              c.hung_up_day = c.time_hung_up.day
+              c.hung_up_month = c.time_hung_up.month
+              c.hung_up_year = c.time_hung_up.year
+
               if c.time_from_answered.is_a?(Time)
                 c.length = (c.time_hung_up - c.time_from_answered).round
               end
@@ -341,6 +364,18 @@ module Jnctn
               time_ringer_start DATETIME, \
               time_answered DATETIME, \
               time_hung_up DATETIME, \
+              ringer_hour INT, \
+              ringer_day INT, \
+              ringer_month INT, \
+              ringer_year INT, \
+              answered_hour INT, \
+              answered_day INT, \
+              answered_month INT, \
+              answered_year INT, \
+              hung_up_hour INT, \
+              hung_up_day INT, \
+              hung_up_month INT, \
+              hung_up_year INT, \
               length INT, \
               state VARCHAR(50))")
 
@@ -364,6 +399,12 @@ module Jnctn
           sql_insert << "time_ringer_start, "
           sql_insert << "time_answered, "
           sql_insert << "time_hung_up, "
+          sql_insert << "ringer_hour, ringer_day, "
+          sql_insert << "ringer_month, ringer_year, "
+          sql_insert << "answered_hour, answered_day, "
+          sql_insert << "answered_month, answered_year, "
+          sql_insert << "hung_up_hour, hung_up_day, "
+          sql_insert << "hung_up_month, hung_up_year, "
           sql_insert << "length, state) "
           sql_insert << "VALUES ("
           sql_insert << "'#{c.call_id.to_s}', "
@@ -375,7 +416,13 @@ module Jnctn
           sql_insert << "'#{mysql_formatted_time(c.time_from_ringer)}', "
           sql_insert << "'#{mysql_formatted_time(c.time_from_answered)}', "
           sql_insert << "'#{mysql_formatted_time(c.time_hung_up)}', "
-          sql_insert << "'#{c.length.to_s}', '#{c.dialog_state.to_s}')"
+          sql_insert << "#{c.ringer_hour}, #{c.ringer_day}, "
+          sql_insert << "#{c.ringer_month}, #{c.ringer_year}, "
+          sql_insert << "#{c.answered_hour}, #{c.answered_day}, "
+          sql_insert << "#{c.answered_month}, #{c.answered_year}, "
+          sql_insert << "#{c.hung_up_hour}, #{c.hung_up_day}, "
+          sql_insert << "#{c.hung_up_month}, #{c.hung_up_year}, "
+          sql_insert << "#{c.length.to_s}, '#{c.dialog_state.to_s}')"
 
           @con.query(sql_insert)
         rescue Mysql::Error => e
