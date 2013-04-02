@@ -546,7 +546,7 @@ module Jnctn
         else
           # Building up the connection
           client = Jabber::Client.new("#{jid}/#{JID}")
-          client.connect
+          client.connect 'xmpp-client.onsip.com'
 
           client.auth(pass)
 
